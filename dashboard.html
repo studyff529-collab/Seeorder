@@ -1,0 +1,457 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pinterest Ordered - Dashboard</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f5f5f5;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            text-align: center;
+            position: relative;
+        }
+
+        .header h1 {
+            font-size: 28px;
+        }
+
+        .back-btn {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            background: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            text-decoration: none;
+            color: #333;
+        }
+
+        .stats-container {
+            background: white;
+            margin: 20px;
+            padding: 25px;
+            border-radius: 15px;            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            text-align: center;
+        }
+
+        .stat-item h3 {
+            font-size: 36px;
+            color: #667eea;
+            margin-bottom: 5px;
+        }
+
+        .stat-item p {
+            color: #666;
+            font-size: 12px;
+            text-transform: uppercase;
+        }
+
+        .recent-orders {
+            background: white;
+            margin: 0 20px 20px;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+
+        .recent-orders h2 {
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #f0f0f0;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 40px 20px;
+            color: #999;
+        }
+
+        .empty-state svg {
+            width: 80px;
+            height: 80px;
+            margin-bottom: 20px;
+            fill: #ddd;
+        }
+
+        .empty-state p {            margin: 10px 0;
+        }
+
+        /* Order List Styles */
+        .order-list {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .order-item {
+            border: 2px solid #e0e0e0;
+            border-radius: 12px;
+            overflow: hidden;
+            transition: all 0.3s;
+        }
+
+        .order-item.enabled {
+            border-color: #4caf50;
+            background: #e8f5e9;
+        }
+
+        .order-item.disabled {
+            border-color: #f44336;
+            background: #ffebee;
+        }
+
+        .order-header {
+            padding: 15px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+        }
+
+        .order-name {
+            font-size: 18px;
+            font-weight: 600;
+            color: #333;
+            flex: 1;
+        }
+
+        .order-controls {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .order-price {
+            font-size: 18px;            font-weight: bold;
+            color: #667eea;
+        }
+
+        /* Toggle Switch */
+        .toggle-switch {
+            position: relative;
+            width: 60px;
+            height: 30px;
+            background: #ccc;
+            border-radius: 15px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        .toggle-switch.active {
+            background: #4caf50;
+        }
+
+        .toggle-slider {
+            position: absolute;
+            top: 3px;
+            left: 3px;
+            width: 24px;
+            height: 24px;
+            background: white;
+            border-radius: 50%;
+            transition: transform 0.3s;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+
+        .toggle-switch.active .toggle-slider {
+            transform: translateX(30px);
+        }
+
+        .order-details {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-out;
+            background: white;
+        }
+
+        .order-details.expanded {
+            max-height: 1000px;
+        }
+
+        .order-details-content {
+            padding: 20px;
+            border-top: 2px solid #f0f0f0;
+        }
+        .detail-row {
+            margin-bottom: 15px;
+        }
+
+        .detail-label {
+            font-size: 12px;
+            color: #666;
+            text-transform: uppercase;
+            margin-bottom: 5px;
+            font-weight: 600;
+        }
+
+        .detail-value {
+            font-size: 15px;
+            color: #333;
+        }
+
+        .product-thumb {
+            width: 100%;
+            max-height: 200px;
+            object-fit: cover;
+            border-radius: 8px;
+            margin-bottom: 15px;
+        }
+
+        .status-badge {
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .status-badge.enabled {
+            background: #4caf50;
+            color: white;
+        }
+
+        .status-badge.disabled {
+            background: #f44336;
+            color: white;
+        }
+
+        .btn-delete-order {
+            background: #f5576c;
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 8px;            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            width: 100%;
+            margin-top: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .btn-delete-order:hover {
+            background: #d63030;
+        }
+
+        .btn-delete-order svg {
+            width: 20px;
+            height: 20px;
+            fill: white;
+        }
+    </style>
+</head>
+<body>
+    <a href="index.html" class="back-btn">← Back</a>
+    
+    <div class="header">
+        <h1>Pinterest Ordered</h1>
+    </div>
+
+    <div class="stats-container">
+        <div class="stats-grid">
+            <div class="stat-item">
+                <h3 id="totalOrders">0</h3>
+                <p>Total Orders</p>
+            </div>
+            <div class="stat-item">
+                <h3 id="enabledOrders">0</h3>
+                <p>Enabled</p>
+            </div>
+            <div class="stat-item">
+                <h3 id="disabledOrders">0</h3>
+                <p>Disabled</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="recent-orders">
+        <h2>Recent Orders</h2>
+        <div class="order-list" id="orderList">
+            <!-- Orders will be displayed here -->        </div>
+        <div class="empty-state" id="emptyState">
+            <svg viewBox="0 0 24 24">
+                <path d="M18 6h-2c0-2.21-1.79-4-4-4S8 3.79 8 6H6c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2zm-6-2c1.1 0 2 .9 2 2h-4c0-1.1.9-2 2-2zm6 16H6V8h12v12z"/>
+            </svg>
+            <p><strong>No orders yet</strong></p>
+            <p>Orders will appear here when customers place them</p>
+        </div>
+    </div>
+
+    <script>
+        // Load orders and stats
+        let orders = JSON.parse(localStorage.getItem('orders')) || [];
+        let stats = JSON.parse(localStorage.getItem('dashboardStats')) || {
+            totalOrders: 0,
+            enabled: 0,
+            disabled: 0
+        };
+
+        // Update stats display
+        updateStats();
+
+        // Render orders
+        renderOrders();
+
+        function updateStats() {
+            document.getElementById('totalOrders').textContent = stats.totalOrders;
+            document.getElementById('enabledOrders').textContent = stats.enabled;
+            document.getElementById('disabledOrders').textContent = stats.disabled;
+        }
+
+        function renderOrders() {
+            const orderList = document.getElementById('orderList');
+            const emptyState = document.getElementById('emptyState');
+
+            if (orders.length === 0) {
+                orderList.innerHTML = '';
+                emptyState.style.display = 'block';
+                return;
+            }
+
+            emptyState.style.display = 'none';
+            
+            // Sort orders by date (newest first)
+            orders.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+
+            orderList.innerHTML = orders.map(order => `
+                <div class="order-item ${order.status}" data-order-id="${order.id}">
+                    <div class="order-header" onclick="toggleOrderDetails(${order.id})">
+                        <div class="order-name">${order.customerName || 'Unknown'}</div>                        <div class="order-controls">
+                            <div class="order-price">₹${order.product?.price || '0'}</div>
+                            <div class="toggle-switch ${order.status === 'enabled' ? 'active' : ''}" 
+                                 onclick="toggleOrderStatus(event, ${order.id})">
+                                <div class="toggle-slider"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="order-details" id="order-details-${order.id}">
+                        <div class="order-details-content">
+                            ${order.product?.image ? `<img src="${order.product.image}" alt="Product" class="product-thumb">` : ''}
+                            
+                            <div class="detail-row">
+                                <div class="detail-label">Product Name</div>
+                                <div class="detail-value">${order.product?.name || 'N/A'}</div>
+                            </div>
+                            
+                            <div class="detail-row">
+                                <div class="detail-label">Product Link</div>
+                                <div class="detail-value" style="word-break: break-all; font-size: 13px;">${order.product?.link || 'N/A'}</div>
+                            </div>
+                            
+                            <div class="detail-row">
+                                <div class="detail-label">Mobile</div>
+                                <div class="detail-value">+91 ${order.mobile || 'N/A'}</div>
+                            </div>
+                            
+                            <div class="detail-row">
+                                <div class="detail-label">Delivery Address</div>
+                                <div class="detail-value">
+                                    ${order.address?.houseNo || ''}<br>
+                                    ${order.address?.roadName || ''}<br>
+                                    ${order.address?.district || ''}, ${order.address?.state || ''}<br>
+                                    Pincode: ${order.address?.pincode || ''}
+                                </div>
+                            </div>
+                            
+                            <div class="detail-row">
+                                <div class="detail-label">Status</div>
+                                <span class="status-badge ${order.status}">${order.status}</span>
+                            </div>
+                            
+                            <div class="detail-row">
+                                <div class="detail-label">Order Date</div>
+                                <div class="detail-value">${order.createdAt ? new Date(order.createdAt).toLocaleString() : 'N/A'}</div>
+                            </div>
+
+                            <button class="btn-delete-order" onclick="deleteOrder(event, ${order.id})">
+                                <svg viewBox="0 0 24 24">
+                                    <path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/>                                </svg>
+                                Delete Order
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function toggleOrderDetails(orderId) {
+            const details = document.getElementById(`order-details-${orderId}`);
+            details.classList.toggle('expanded');
+        }
+
+        function toggleOrderStatus(event, orderId) {
+            event.stopPropagation();
+            
+            const order = orders.find(o => o.id === orderId);
+            if (order) {
+                // Toggle status
+                order.status = order.status === 'enabled' ? 'disabled' : 'enabled';
+                
+                // Update localStorage
+                localStorage.setItem('orders', JSON.stringify(orders));
+                
+                // Update stats
+                stats.enabled = orders.filter(o => o.status === 'enabled').length;
+                stats.disabled = orders.filter(o => o.status === 'disabled').length;
+                localStorage.setItem('dashboardStats', JSON.stringify(stats));
+                
+                // Update display
+                updateStats();
+                
+                // Re-render to show updated status
+                renderOrders();
+            }
+        }
+
+        function deleteOrder(event, orderId) {
+            event.stopPropagation();
+            
+            if (confirm('Are you sure you want to delete this order?')) {
+                // Remove order from array
+                orders = orders.filter(o => o.id !== orderId);
+                
+                // Update localStorage
+                localStorage.setItem('orders', JSON.stringify(orders));
+                
+                // Update stats
+                stats.totalOrders = orders.length;                stats.enabled = orders.filter(o => o.status === 'enabled').length;
+                stats.disabled = orders.filter(o => o.status === 'disabled').length;
+                localStorage.setItem('dashboardStats', JSON.stringify(stats));
+                
+                // Update display
+                updateStats();
+                
+                // Re-render
+                renderOrders();
+                
+                alert('Order deleted successfully!');
+            }
+        }
+    </script>
+</body>
+</html>

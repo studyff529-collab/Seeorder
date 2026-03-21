@@ -1,0 +1,671 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manage Product Links</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f5f5f5;
+        }
+
+        .header {
+            background: white;
+            padding: 15px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header h1 {
+            font-size: 20px;
+            color: #333;
+        }
+
+        .btn-add {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 10px 25px;
+            border-radius: 10px;
+            font-size: 16px;
+            cursor: pointer;
+            font-weight: 600;
+        }
+
+        .content {
+            padding: 20px;
+        }
+        .card {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+
+        .saved-products {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #f0f0f0;
+        }
+
+        .saved-products h3 {
+            font-size: 20px;
+            color: #333;
+        }
+
+        .badge {
+            background: #667eea;
+            color: white;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 14px;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 40px 20px;
+            color: #999;
+        }
+
+        .empty-state svg {
+            width: 80px;
+            height: 80px;
+            margin-bottom: 20px;
+            fill: #bbb;
+        }
+
+        .empty-state p {
+            margin: 10px 0;
+        }
+
+        .product-list {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;        }
+
+        .product-card {
+            background: #e8f5e9;
+            border: 2px solid #4caf50;
+            border-radius: 12px;
+            overflow: hidden;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .product-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(76, 175, 80, 0.3);
+        }
+
+        .product-card-header {
+            padding: 15px 20px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .product-image {
+            width: 70px;
+            height: 70px;
+            border-radius: 8px;
+            object-fit: cover;
+            background: #ddd;
+            flex-shrink: 0;
+        }
+
+        .product-info {
+            flex: 1;
+        }
+
+        .product-info h4 {
+            font-size: 16px;
+            color: #333;
+            margin-bottom: 5px;
+        }
+
+        .product-info .price {
+            font-size: 18px;
+            color: #667eea;
+            font-weight: bold;
+            margin-bottom: 3px;
+        }
+
+        .product-info .preview-text {            font-size: 13px;
+            color: #666;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .product-actions {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .expand-icon {
+            font-size: 20px;
+            color: #667eea;
+            transition: transform 0.3s;
+        }
+
+        .product-card.expanded .expand-icon {
+            transform: rotate(180deg);
+        }
+
+        .btn-action {
+            border: none;
+            padding: 8px 12px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: all 0.2s;
+        }
+
+        .btn-edit {
+            background: #2196f3;
+            color: white;
+        }
+
+        .btn-edit:hover {
+            background: #1976d2;
+        }
+
+        .btn-delete {
+            background: #f5576c;
+            color: white;
+        }
+
+        .btn-delete:hover {
+            background: #d63030;
+        }
+        /* Expanded Details Section */
+        .product-details {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-out;
+            background: white;
+        }
+
+        .product-card.expanded .product-details {
+            max-height: 800px;
+        }
+
+        .product-details-content {
+            padding: 20px;
+            border-top: 2px solid #4caf50;
+        }
+
+        .detail-row {
+            margin-bottom: 15px;
+        }
+
+        .detail-label {
+            font-size: 12px;
+            color: #666;
+            text-transform: uppercase;
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+
+        .detail-value {
+            font-size: 15px;
+            color: #333;
+            word-break: break-all;
+        }
+
+        .detail-value.link {
+            background: #e8f4ff;
+            padding: 10px;
+            border-radius: 8px;
+            border-left: 4px solid #667eea;
+        }
+
+        .detail-value.price {
+            font-size: 24px;
+            color: #667eea;
+            font-weight: bold;
+        }
+
+        .full-image {
+            width: 100%;            max-height: 300px;
+            object-fit: cover;
+            border-radius: 8px;
+            margin-bottom: 15px;
+        }
+
+        /* Modal Styles */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-overlay.active {
+            display: flex;
+        }
+
+        .modal {
+            background: white;
+            border-radius: 20px;
+            padding: 25px;
+            width: 90%;
+            max-width: 450px;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .modal h2 {
+            text-align: center;
+            margin-bottom: 25px;
+            color: #333;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+            font-weight: 600;
+        }
+        .required {
+            color: #f5576c;
+        }
+
+        .form-group input,
+        .form-group textarea {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 16px;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .price-input-group {
+            display: flex;
+            align-items: center;
+            gap: 0;
+        }
+
+        .price-symbol {
+            background: #667eea;
+            color: white;
+            padding: 12px 15px;
+            border-radius: 10px 0 0 10px;
+            font-weight: bold;
+            font-size: 18px;
+        }
+
+        .price-input {
+            flex: 1;
+            border-radius: 0 10px 10px 0;
+        }
+
+        .upload-area {
+            border: 2px dashed #667eea;
+            border-radius: 12px;
+            padding: 30px 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .upload-area:hover {            background: #f0f0ff;
+        }
+
+        .upload-area svg {
+            width: 50px;
+            height: 50px;
+            fill: #667eea;
+            margin-bottom: 10px;
+        }
+
+        .upload-area p {
+            color: #666;
+        }
+
+        .preview-image {
+            width: 100%;
+            max-height: 200px;
+            object-fit: cover;
+            border-radius: 10px;
+            margin-top: 10px;
+            display: none;
+        }
+
+        .modal-buttons {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-top: 25px;
+        }
+
+        .btn-cancel {
+            background: #e0e0e0;
+            color: #333;
+            border: none;
+            padding: 14px;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .btn-done {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 14px;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;        }
+
+        .btn-done:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+
+        .back-btn {
+            position: fixed;
+            top: 15px;
+            left: 15px;
+            background: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            text-decoration: none;
+            color: #333;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <a href="index.html" class="back-btn">← Back</a>
+
+    <div class="header">
+        <h1>Manage Product Links</h1>
+        <button class="btn-add" onclick="openModal()">+ Add</button>
+    </div>
+
+    <div class="content">
+        <div class="card">
+            <div class="saved-products">
+                <h3>Saved Products</h3>
+                <span class="badge" id="productCount">0</span>
+            </div>
+
+            <div class="product-list" id="productList">
+                <!-- Products will be added here -->
+            </div>
+
+            <div class="empty-state" id="emptyState">
+                <svg viewBox="0 0 24 24">
+                    <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V5h14v14z"/>
+                    <path d="M7 10h2v7H7zm4-3h2v10h-2zm4 6h2v4h-2z"/>
+                </svg>
+                <p><strong>No products yet</strong></p>
+                <p>Click Add to add first product</p>            </div>
+        </div>
+    </div>
+
+    <!-- Add/Edit Product Modal -->
+    <div class="modal-overlay" id="modalOverlay">
+        <div class="modal">
+            <h2 id="modalTitle">Add New Product</h2>
+            
+            <form id="productForm">
+                <input type="hidden" id="editProductId">
+                
+                <div class="form-group">
+                    <label>Product Link <span class="required">*</span></label>
+                    <input type="url" id="productLink" placeholder="https://..." required>
+                </div>
+
+                <div class="form-group">
+                    <label>Price <span class="required">*</span></label>
+                    <div class="price-input-group">
+                        <span class="price-symbol">₹</span>
+                        <input type="number" id="productPrice" class="price-input" placeholder="Enter price" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Details <span class="required">*</span></label>
+                    <textarea id="productDetails" rows="3" placeholder="Product details" required></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label>Photo <span class="required">*</span></label>
+                    <div class="upload-area" onclick="document.getElementById('productPhoto').click()">
+                        <svg viewBox="0 0 24 24">
+                            <path d="M19.35 10.04C18.67 6.59 15.64 4 12 4 9.11 4 6.6 5.64 5.35 8.04 2.34 8.36 0 10.91 0 14c0 3.31 2.69 6 6 6h13c2.76 0 5-2.24 5-5 0-2.64-2.05-4.78-4.65-4.96zM14 13v4h-4v-4H7l5-5 5 5h-3z"/>
+                        </svg>
+                        <p>Click to upload</p>
+                    </div>
+                    <input type="file" id="productPhoto" accept="image/*" style="display: none;" onchange="previewImage(this)">
+                    <img id="imagePreview" class="preview-image" alt="Preview">
+                </div>
+
+                <div class="modal-buttons">
+                    <button type="button" class="btn-cancel" onclick="closeModal()">Cancel</button>
+                    <button type="submit" class="btn-done" id="doneBtn" disabled>Done</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    <script>
+        let products = JSON.parse(localStorage.getItem('products')) || [];
+        let currentImage = null;
+        let editingProductId = null;
+
+        // Update product count on load
+        updateProductCount();
+        renderProducts();
+
+        function openModal(editId = null) {
+            document.getElementById('modalOverlay').classList.add('active');
+            document.getElementById('productForm').reset();
+            document.getElementById('imagePreview').style.display = 'none';
+            document.getElementById('doneBtn').disabled = true;
+            currentImage = null;
+            editingProductId = editId;
+
+            if (editId) {
+                // Edit mode
+                document.getElementById('modalTitle').textContent = 'Edit Product';
+                const product = products.find(p => p.id === editId);
+                if (product) {
+                    document.getElementById('editProductId').value = product.id;
+                    document.getElementById('productLink').value = product.link;
+                    document.getElementById('productPrice').value = product.price;
+                    document.getElementById('productDetails').value = product.details;
+                    if (product.image) {
+                        currentImage = product.image;
+                        document.getElementById('imagePreview').src = currentImage;
+                        document.getElementById('imagePreview').style.display = 'block';
+                        document.getElementById('doneBtn').disabled = false;
+                    }
+                }
+            } else {
+                // Add mode
+                document.getElementById('modalTitle').textContent = 'Add New Product';
+                document.getElementById('editProductId').value = '';
+            }
+        }
+
+        function closeModal() {
+            document.getElementById('modalOverlay').classList.remove('active');
+        }
+
+        function previewImage(input) {
+            if (input.files && input.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    currentImage = e.target.result;
+                    const preview = document.getElementById('imagePreview');                    preview.src = currentImage;
+                    preview.style.display = 'block';
+                    document.getElementById('doneBtn').disabled = false;
+                };
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
+
+        document.getElementById('productForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            if (editingProductId) {
+                // Edit existing product
+                const index = products.findIndex(p => p.id === editingProductId);
+                if (index !== -1) {
+                    products[index] = {
+                        ...products[index],
+                        link: document.getElementById('productLink').value,
+                        price: document.getElementById('productPrice').value,
+                        details: document.getElementById('productDetails').value,
+                        image: currentImage || products[index].image
+                    };
+                }
+            } else {
+                // Add new product
+                const product = {
+                    id: Date.now(),
+                    link: document.getElementById('productLink').value,
+                    price: document.getElementById('productPrice').value,
+                    details: document.getElementById('productDetails').value,
+                    image: currentImage
+                };
+                products.push(product);
+            }
+
+            localStorage.setItem('products', JSON.stringify(products));
+            updateProductCount();
+            renderProducts();
+            closeModal();
+
+            alert(editingProductId ? 'Product updated successfully!' : 'Product added successfully!');
+            editingProductId = null;
+        });
+
+        function updateProductCount() {
+            document.getElementById('productCount').textContent = products.length;
+        }
+
+        function renderProducts() {
+            const productList = document.getElementById('productList');            const emptyState = document.getElementById('emptyState');
+
+            if (products.length === 0) {
+                productList.innerHTML = '';
+                emptyState.style.display = 'block';
+            } else {
+                emptyState.style.display = 'none';
+                productList.innerHTML = products.map(product => `
+                    <div class="product-card" data-id="${product.id}" onclick="toggleDetails(${product.id})">
+                        <div class="product-card-header">
+                            <img src="${product.image || 'image/svg+xml;base64,PHN2ZyB2aWV3Qm94PSIwIDAgMjQgMjQiPjxwYXRoIGQ9Ik0yMSAxOXYtMWMwLTEuMS0uOS0yLTItMmgtNHYtMmgtMnYySDVjLTEuMSAwLTItLjktMi0ydjFjMCAxLjEuOSAyIDIgMmgxNGMxLjEgMCAyLS45IDItMnoiLz48cGF0aCBkPSJNMTUgOGMtMi4yMSAwLTQgMS43OS00IDRzMiA0IDQgNCA0LTEuNzkgNC00LTEuNzktNC00LTR6bTAgNmMtMS4xIDAtMi0uOS0yLTJzLjktMiAyLTIgMiAuOSAyIDItLjkgMi0yIDJ6Ii8+PC9zdmc+'}" 
+                                 alt="Product" class="product-image">
+                            <div class="product-info">
+                                <h4>${product.details.substring(0, 20)}${product.details.length > 20 ? '...' : ''}</h4>
+                                <div class="price">₹${product.price}</div>
+                                <div class="preview-text">${product.details}</div>
+                            </div>
+                            <div class="product-actions">
+                                <span class="expand-icon">▼</span>
+                                <button class="btn-action btn-edit" onclick="editProduct(event, ${product.id})">✏️</button>
+                                <button class="btn-action btn-delete" onclick="deleteProduct(event, ${product.id})">🗑️</button>
+                            </div>
+                        </div>
+                        
+                        <div class="product-details" id="details-${product.id}">
+                            <div class="product-details-content">
+                                ${product.image ? `
+                                    <img src="${product.image}" alt="Product" class="full-image">
+                                ` : ''}
+                                
+                                <div class="detail-row">
+                                    <div class="detail-label">Product Name / Details</div>
+                                    <div class="detail-value">${product.details}</div>
+                                </div>
+                                
+                                <div class="detail-row">
+                                    <div class="detail-label">Price</div>
+                                    <div class="detail-value price">₹${product.price}</div>
+                                </div>
+                                
+                                <div class="detail-row">
+                                    <div class="detail-label">Product Link</div>
+                                    <div class="detail-value link">${product.link}</div>
+                                </div>
+                                
+                                <div class="detail-row">
+                                    <div class="detail-label">Product ID</div>
+                                    <div class="detail-value">#${product.id}</div>
+                                </div>
+                            </div>                        </div>
+                    </div>
+                `).join('');
+            }
+        }
+
+        function toggleDetails(productId) {
+            const card = document.querySelector(`[data-id="${productId}"]`);
+            card.classList.toggle('expanded');
+        }
+
+        function editProduct(event, id) {
+            event.stopPropagation();
+            openModal(id);
+        }
+
+        function deleteProduct(event, id) {
+            event.stopPropagation();
+            
+            if (confirm('Are you sure you want to delete this product?')) {
+                products = products.filter(p => p.id !== id);
+                localStorage.setItem('products', JSON.stringify(products));
+                updateProductCount();
+                renderProducts();
+            }
+        }
+
+        // Function to validate link (called from paste-product-link.html)
+        function validateLink(link) {
+            return products.some(p => p.link === link);
+        }
+    </script>
+</body>
+</html>
