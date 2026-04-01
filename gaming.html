@@ -1,0 +1,481 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gaming Hub - FF Player</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background: #0a0a0a;
+            color: white;
+            overflow-x: hidden;
+        }
+
+        /* ========================================
+           HERO SECTION (Free Fire Wallpaper)
+           ======================================== */
+        .hero-section {
+            position: relative;
+            height: 300px;
+            background: linear-gradient(180deg, rgba(102, 126, 234, 0.8) 0%, rgba(118, 75, 162, 0.8) 100%),
+                        url('https://wallpaperaccess.com/full/234596.jpg');
+            background-size: cover;
+            background-position: center;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+        }
+
+        .hero-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: radial-gradient(circle at center, transparent 0%, rgba(0,0,0,0.6) 100%);
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 2;            text-align: center;
+            animation: fadeInUp 1s ease;
+        }
+
+        .hero-title {
+            font-size: 64px;
+            font-weight: 900;
+            text-transform: uppercase;
+            background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 50%, #ff6b6b 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-shadow: 0 0 40px rgba(251, 191, 36, 0.5);
+            letter-spacing: 4px;
+            animation: glow 2s ease-in-out infinite;
+        }
+
+        .hero-subtitle {
+            font-size: 18px;
+            color: rgba(255,255,255,0.9);
+            margin-top: 10px;
+            letter-spacing: 8px;
+            text-transform: uppercase;
+        }
+
+        @keyframes glow {
+            0%, 100% { filter: brightness(1); }
+            50% { filter: brightness(1.3); }
+        }
+
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* ========================================
+           SECTIONS
+           ======================================== */
+        .section {
+            padding: 30px 20px;
+            margin-bottom: 20px;
+        }
+
+        .section-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 3px solid #667eea;
+            position: relative;        }
+
+        .section-header::before {
+            content: '';
+            position: absolute;
+            bottom: -3px;
+            left: 0;
+            width: 100px;
+            height: 3px;
+            background: linear-gradient(90deg, #fbbf24, #f59e0b);
+        }
+
+        .section-icon {
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 12px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-right: 15px;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .section-icon i {
+            font-size: 24px;
+            color: white;
+        }
+
+        .section-title {
+            font-size: 24px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            background: linear-gradient(90deg, #fff 0%, #667eea 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        /* ========================================
+           GAMES GRID
+           ======================================== */
+        .games-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+            gap: 20px;
+            padding: 10px;
+        }
+        .game-card {
+            background: linear-gradient(135deg, #1a1a2e 0%, #2a2a4a 100%);
+            border-radius: 15px;
+            overflow: hidden;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: 2px solid transparent;
+            position: relative;
+            aspect-ratio: 3/4;
+        }
+
+        .game-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%);
+            opacity: 0;
+            transition: opacity 0.3s;
+            z-index: 1;
+        }
+
+        .game-card:hover {
+            transform: translateY(-8px);
+            border-color: #667eea;
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.4);
+        }
+
+        .game-card:hover::before {
+            opacity: 1;
+        }
+
+        .game-image {
+            width: 100%;
+            height: 65%;
+            object-fit: cover;
+            border-bottom: 2px solid #667eea;
+        }
+
+        .game-info {
+            padding: 12px;
+            position: relative;
+            z-index: 2;
+            height: 35%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+        .game-name {
+            font-size: 14px;
+            font-weight: 600;
+            color: #fff;
+            text-align: center;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .game-card.coming-soon {
+            opacity: 0.6;
+            border: 2px dashed #444;
+        }
+
+        .game-card.coming-soon .game-name {
+            color: #fbbf24;
+            font-size: 12px;
+        }
+
+        /* ========================================
+           BOTTOM NAV
+           ======================================== */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background: #16213e;
+            display: flex;
+            justify-content: space-around;
+            padding: 12px 0;
+            border-top: 1px solid #333;
+            z-index: 1000;
+        }
+
+        .nav-item {
+            color: #888;
+            font-size: 22px;
+            cursor: pointer;
+            transition: 0.3s;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .nav-item.active {
+            color: #667eea;
+        }
+        .nav-item:hover {
+            color: #fff;
+        }
+
+        /* ========================================
+           RESPONSIVE
+           ======================================== */
+        @media (max-width: 768px) {
+            .hero-title {
+                font-size: 42px;
+            }
+            .hero-subtitle {
+                font-size: 14px;
+                letter-spacing: 4px;
+            }
+            .games-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 15px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .hero-title {
+                font-size: 36px;
+            }
+            .section-title {
+                font-size: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ========================================
+         HERO SECTION
+         ======================================== -->
+    <div class="hero-section">
+        <div class="hero-content">
+            <h1 class="hero-title">FREE FIRE</h1>
+            <p class="hero-subtitle">Battle Royale</p>
+        </div>
+    </div>
+
+    <!-- ========================================
+         SECTIONS (Dynamic Content)
+         ======================================== -->
+    <div id="sectionsContainer">
+        <!-- Sections will be loaded here dynamically -->
+    </div>
+    <!-- ========================================
+         BOTTOM NAVIGATION
+         ======================================== -->
+    <div class="bottom-nav">
+        <div class="nav-item" onclick="navigate('home.html')">
+            <i class="fas fa-home"></i>
+        </div>
+        <div class="nav-item active" onclick="navigate('gaming.html')">
+            <i class="fas fa-gamepad"></i>
+        </div>
+        <div class="nav-item" onclick="navigate('battle.html')">
+            <i class="fas fa-crosshairs"></i>
+        </div>
+        <div class="nav-item" onclick="navigate('profile.html')">
+            <i class="fas fa-user"></i>
+        </div>
+    </div>
+
+    <!-- Firebase SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
+
+    <script>
+        // ========================================
+        // FIREBASE CONFIGURATION
+        // ========================================
+        const firebaseConfig = {
+            apiKey: "AIzaSyC1tXvanDZ-NsMksSgYemHbXALeckncA3M",
+            authDomain: "ff-player-99533.firebaseapp.com",
+            databaseURL: "https://ff-player-99533-default-rtdb.asia-southeast1.firebasedatabase.app",
+            projectId: "ff-player-99533",
+            storageBucket: "ff-player-99533.firebasestorage.app",
+            messagingSenderId: "204761167233",
+            appId: "1:204761167233:web:bd33032ce7d56b4e7fe480"
+        };
+
+        firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+        const database = firebase.database();
+
+        // ========================================
+        // 📋 CONFIGURATION - ADD YOUR GAMES HERE
+        // ========================================
+        
+        // SECTION 1: RULE E-SPORT
+        const ruleESportGames = [
+            { name: "Pro League", image: "https://wallpaperaccess.com/full/234596.jpg", link: "proleague.html" },
+            { name: "Championship", image: "https://wallpaperaccess.com/full/1234567.jpg", link: "championship.html" },
+            { name: "Tournament", image: "https://wallpaperaccess.com/full/1234577.jpg", link: "tournament.html" },            { name: "Qualifier", image: "https://via.placeholder.com/300x400/667eea/ffffff?text=Qualifier", link: "qualifier.html" },
+            { name: "Playoffs", image: "https://via.placeholder.com/300x400/764ba2/ffffff?text=Playoffs", link: "playoffs.html" },
+            { name: "Finals", image: "https://via.placeholder.com/300x400/fbbf24/ffffff?text=Finals", link: "finals.html" }
+        ];
+
+        // SECTION 2: NORMAL E-SPORT
+        const normalESportGames = [
+            { name: "Custom Room", image: "https://wallpaperaccess.com/full/234596.jpg", link: "customroom.html" },
+            { name: "Ranked Match", image: "https://wallpaperaccess.com/full/1234567.jpg", link: "ranked.html" },
+            { name: "Classic Mode", image: "https://wallpaperaccess.com/full/1234577.jpg", link: "classic.html" },
+            { name: "Arcade", image: "https://via.placeholder.com/300x400/667eea/ffffff?text=Arcade", link: "arcade.html" },
+            { name: "Training", image: "https://via.placeholder.com/300x400/764ba2/ffffff?text=Training", link: "training.html" },
+            { name: "Practice", image: "https://via.placeholder.com/300x400/fbbf24/ffffff?text=Practice", link: "practice.html" }
+        ];
+
+        // SECTION 3: GIVEAWAYS
+        const giveawaysGames = [
+            { name: "Diamond Giveaway", image: "https://wallpaperaccess.com/full/234596.jpg", link: "diamond.html" },
+            { name: "UC Giveaway", image: "https://wallpaperaccess.com/full/1234567.jpg", link: "uc.html" },
+            { name: "Skin Giveaway", image: "https://wallpaperaccess.com/full/1234577.jpg", link: "skin.html" },
+            { name: "Weapon Skin", image: "https://via.placeholder.com/300x400/667eea/ffffff?text=Weapon", link: "weapon.html" },
+            { name: "Bundle Giveaway", image: "https://via.placeholder.com/300x400/764ba2/ffffff?text=Bundle", link: "bundle.html" },
+            { name: "Elite Pass", image: "https://via.placeholder.com/300x400/fbbf24/ffffff?text=Elite+Pass", link: "elitepass.html" }
+        ];
+
+        // SECTION 4: TOURNAMENTS (Scrollable)
+        const tournamentsGames = [
+            { name: "Solo Tournament", image: "https://wallpaperaccess.com/full/234596.jpg", link: "solo.html" },
+            { name: "Duo Tournament", image: "https://wallpaperaccess.com/full/1234567.jpg", link: "duo.html" },
+            { name: "Squad Tournament", image: "https://wallpaperaccess.com/full/1234577.jpg", link: "squad.html" },
+            { name: "Weekly Cup", image: "https://via.placeholder.com/300x400/667eea/ffffff?text=Weekly", link: "weekly.html" },
+            { name: "Monthly Cup", image: "https://via.placeholder.com/300x400/764ba2/ffffff?text=Monthly", link: "monthly.html" },
+            { name: "Grand Final", image: "https://via.placeholder.com/300x400/fbbf24/ffffff?text=Grand+Final", link: "grandfinal.html" }
+        ];
+
+        // ========================================
+        // SECTIONS CONFIGURATION
+        // ========================================
+        const sections = [
+            {
+                title: "Rule E-sport",
+                icon: "fa-trophy",
+                games: ruleESportGames,
+                id: "rule-esport"
+            },
+            {
+                title: "Normal E-sport",
+                icon: "fa-gamepad",
+                games: normalESportGames,
+                id: "normal-esport"            },
+            {
+                title: "Giveaways",
+                icon: "fa-gift",
+                games: giveawaysGames,
+                id: "giveaways"
+            },
+            {
+                title: "Tournaments",
+                icon: "fa-medal",
+                games: tournamentsGames,
+                id: "tournaments"
+            }
+        ];
+
+        // ========================================
+        // RENDER SECTIONS
+        // ========================================
+        function renderSections() {
+            const container = document.getElementById('sectionsContainer');
+            container.innerHTML = '';
+
+            sections.forEach(section => {
+                const sectionDiv = document.createElement('div');
+                sectionDiv.className = 'section';
+                sectionDiv.id = section.id;
+
+                // Section Header
+                sectionDiv.innerHTML = `
+                    <div class="section-header">
+                        <div class="section-icon">
+                            <i class="fas ${section.icon}"></i>
+                        </div>
+                        <h2 class="section-title">${section.title}</h2>
+                    </div>
+                    <div class="games-grid" id="grid-${section.id}">
+                        <!-- Games will be loaded here -->
+                    </div>
+                `;
+
+                container.appendChild(sectionDiv);
+
+                // Render Games
+                const grid = sectionDiv.querySelector(`#grid-${section.id}`);
+                section.games.forEach(game => {
+                    const card = document.createElement('div');
+                    card.className = `game-card ${game.comingSoon ? 'coming-soon' : ''}`;
+                    
+                    if (!game.comingSoon) {
+                        card.onclick = () => {                            console.log(`Navigating to: ${game.link}`);
+                            window.location.href = game.link;
+                        };
+                    } else {
+                        card.onclick = () => {
+                            alert(game.name + " - Coming Soon!");
+                        };
+                    }
+
+                    card.innerHTML = `
+                        <img src="${game.image}" alt="${game.name}" class="game-image" onerror="this.src='https://via.placeholder.com/300x400/333/fff?text=${encodeURIComponent(game.name)}'">
+                        <div class="game-info">
+                            <div class="game-name">${game.name}</div>
+                        </div>
+                    `;
+
+                    grid.appendChild(card);
+                });
+            });
+        }
+
+        // ========================================
+        // NAVIGATION
+        // ========================================
+        function navigate(page) {
+            if (page === 'gaming.html') return;
+            window.location.href = page;
+        }
+
+        // ========================================
+        // INITIALIZE
+        // ========================================
+        document.addEventListener('DOMContentLoaded', () => {
+            console.log("✅ Gaming Hub Loaded");
+            renderSections();
+        });
+
+    </script>
+</body>
+</html>
